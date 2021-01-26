@@ -39,7 +39,15 @@
    
 ## 运行参数
  - mtSecKill -sku=100012043978 -num=2 -works=6 -time=09:59:59 运行参数 均有默认可以不加
+ 
+```javascript
+// 源码仓库 https://github.com.cnpmjs.org/zqjzqj/mtSecKill/blob/master
+go version // 查看go版本
+go env // 查看go本地配置
+SET GO111MODULE=on // window开启mod模式
+SET GOPROXY=https://goproxy.cn 
+// 设置代理 https://goproxy.cn,direct（七牛） https://mirrors.aliyun.com/goproxy/,direct（阿里云） https://goproxy.io,direct（官方）
+time go get golang.org/x/tour // 测试代理速度
 
-## 打赏
-要是客官抢到了茅台，心情好，请我喝一杯咖啡好不好:)  
-![收款二维码](https://github.com/zqjzqj/mtSecKill/blob/master/zqijun.png)
+go run ./cmd/main.go // 运行代码，自动安装依赖
+```

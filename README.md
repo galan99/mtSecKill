@@ -41,6 +41,7 @@
  - mtSecKill -sku=100012043978 -num=2 -works=6 -time=09:59:59 运行参数 均有默认可以不加
  
 ```javascript
+git clone https://github.com.cnpmjs.org/zqjzqj/mtSecKill.git jdbuy --depth 1 //最近一次commit代码
 // 源码仓库 https://github.com.cnpmjs.org/zqjzqj/mtSecKill/blob/master
 go version // 查看go版本
 go env // 查看go本地配置

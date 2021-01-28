@@ -273,6 +273,53 @@ func (jsk *jdSecKill) WaitStart() chromedp.ActionFunc {
 	}
 }
 
+func (jsk *jdSecKill) buySomeThing() chromedp.ActionFunc {
+	return func(ctx context.Context) error {
+		RE:
+		logs.PrintlnInfo("正在获取eid和fp参数....")
+		_ = chromedp.Navigate("https://item.jd.com/"+ "100014399944" +".html").Do(ctx)
+		logs.PrintlnInfo("等待商品详情页更新完成....")
+		_ = chromedp.WaitVisible("#InitCartUrl").Do(ctx)
+		_ = chromedp.Sleep(1 * time.Second).Do(ctx);
+		_ = chromedp.Click("#InitCartUrl").Do(ctx)
+		_ = chromedp.WaitVisible("#GotoShoppingCart").Do(ctx)
+		_ = chromedp.Sleep(1 * time.Second).Do(ctx);
+		_ = chromedp.Click("#GotoShoppingCart").Do(ctx)
+		//_ = chromedp.Navigate("https://cart.jd.com/cart_index/").Do(ctx)
+		_ = chromedp.WaitVisible("#cart-body").Do(ctx)
+		_ = chromedp.Click(".common-submit-btn").Do(ctx)
+		//_ = chromedp.WaitVisible("#mainframe").Do(ctx)
+		ch, cc := chromedpEngine.WaitDocumentUpdated(ctx)
+		defer cc()
+		logs.PrintlnInfo("等待结算页加载完成..... 如遇到未选中商品错误，可手动选中后点击结算")
+		_ = chromedp.WaitVisible("#order-submit").Do(ctx)
+		_ = chromedp.Sleep(1 * time.Second).Do(ctx);
+		// _ = chromedp.Click("#order-submit").Do(ctx) // 购买下单
+		<-ch
+		//执行js参数 将eid和fp显示到对应元素上
+		_ = chromedp.Sleep(3 * time.Second).Do(ctx)
+		res := make(map[string]interface{})
+		err = chromedp.Evaluate("_JdTdudfp", &res).Do(ctx)
+		logs.PrintErr(err)
+		logs.Println("_JdTdudfp: ", res)
+		eid, ok := res["eid"]
+		if !ok {
+			logs.PrintlnInfo("获取eid失败,正在重试")
+			goto RE
+		}
+		jsk.eid = eid.(string)
+		jsk.fp = res["fp"].(string)
+
+		if jsk.fp == "" || jsk.eid == "" || jsk.fp == "undefined" || jsk.eid == "undefined" {
+			logs.PrintlnWarning("获取参数失败，等待重试。。。 重试过程过久可手动刷新浏览器")
+			goto RE
+		}
+		logs.PrintlnInfo("参数获取成功：eid【"+jsk.eid+"】, fp【"+jsk.fp+"】")
+
+		return nil
+	}
+}
+
 func (jsk *jdSecKill) GetEidAndFp() chromedp.ActionFunc {
 	return func(ctx context.Context) error {
 		RE:
@@ -303,6 +350,9 @@ func (jsk *jdSecKill) GetEidAndFp() chromedp.ActionFunc {
 		ch, cc := chromedpEngine.WaitDocumentUpdated(ctx)
 		defer cc()
 		logs.PrintlnInfo("等待结算页加载完成..... 如遇到未选中商品错误，可手动选中后点击结算")
+		_ = chromedp.WaitVisible("#order-submit").Do(ctx)
+		_ = chromedp.Sleep(1 * time.Second).Do(ctx);
+		// _ = chromedp.Click("#order-submit").Do(ctx) // 购买下单
 		<-ch
 		//执行js参数 将eid和fp显示到对应元素上
 		_ = chromedp.Sleep(3 * time.Second).Do(ctx)

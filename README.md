@@ -43,6 +43,7 @@
 ```javascript
 git clone https://github.com.cnpmjs.org/zqjzqj/mtSecKill.git jdbuy --depth 1 //最近一次commit代码
 // 源码仓库 https://github.com.cnpmjs.org/zqjzqj/mtSecKill/blob/master
+go get // 安装依赖
 go version // 查看go版本
 go env // 查看go本地配置
 SET GO111MODULE=on // window开启mod模式
